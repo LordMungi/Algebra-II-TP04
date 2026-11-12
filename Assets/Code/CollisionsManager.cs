@@ -12,11 +12,7 @@ public class CollisionsManager : MonoBehaviour
     void Start()
     {
         worldBounds = new Bounds(worldBounds);
-
-        foreach (Entity entity in entities)
-        {
-            _baseOctree.Insert(entity);
-        }
+        _baseOctree = new Octree(worldBounds, 10);
     }
 
     void Update()
