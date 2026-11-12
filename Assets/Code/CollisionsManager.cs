@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CollisionsManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class CollisionsManager : MonoBehaviour
 
     private Octree _baseOctree;
 
+    private bool _debugView = false;
 
     void Start()
     {
@@ -17,7 +19,11 @@ public class CollisionsManager : MonoBehaviour
 
     void Update()
     {
-        
+        if (_debugView)
+            _baseOctree.Draw();
+
+        if (Keyboard.current.tabKey.wasPressedThisFrame)
+            _debugView = !_debugView;
     }
 
     private void OnDrawGizmos()

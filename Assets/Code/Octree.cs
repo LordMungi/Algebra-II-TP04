@@ -62,5 +62,35 @@ public class Octree
         _branches[5] = new Octree(new Bounds(min.x, center.y, center.z, center.x, max.y, max.z), _limit, _level + 1);
         _branches[6] = new Octree(new Bounds(center.x, center.y, center.z, max.x, max.y, max.z), _limit, _level + 1);
         _branches[7] = new Octree(new Bounds(center.x, center.y, min.z, max.x, max.y, center.z), _limit, _level + 1);
+
+        _isDivided = true;
+    }
+
+    public void Draw()
+    {
+        Vector3 min = _bounds.min;
+        Vector3 max = _bounds.max;
+
+        Debug.DrawLine(new Vector3(min.x, min.y, min.z), new Vector3(min.x, min.y, max.z), Color.green);
+        Debug.DrawLine(new Vector3(min.x, min.y, max.z), new Vector3(max.x, min.y, max.z), Color.green);
+        Debug.DrawLine(new Vector3(max.x, min.y, max.z), new Vector3(max.x, min.y, min.z), Color.green);
+        Debug.DrawLine(new Vector3(max.x, min.y, min.z), new Vector3(min.x, min.y, min.z), Color.green);
+        Debug.DrawLine(new Vector3(min.x, min.y, min.z), new Vector3(min.x, max.y, min.z), Color.green);
+        Debug.DrawLine(new Vector3(min.x, min.y, min.z), new Vector3(min.x, max.y, min.z), Color.green);
+        Debug.DrawLine(new Vector3(min.x, min.y, max.z), new Vector3(min.x, max.y, max.z), Color.green);
+        Debug.DrawLine(new Vector3(max.x, min.y, max.z), new Vector3(max.x, max.y, max.z), Color.green);
+        Debug.DrawLine(new Vector3(max.x, min.y, min.z), new Vector3(max.x, max.y, min.z), Color.green);
+        Debug.DrawLine(new Vector3(min.x, max.y, min.z), new Vector3(min.x, max.y, max.z), Color.green);
+        Debug.DrawLine(new Vector3(min.x, max.y, max.z), new Vector3(max.x, max.y, max.z), Color.green);
+        Debug.DrawLine(new Vector3(max.x, max.y, max.z), new Vector3(max.x, max.y, min.z), Color.green);
+        Debug.DrawLine(new Vector3(max.x, max.y, min.z), new Vector3(min.x, max.y, min.z), Color.green);
+
+        if (_isDivided)
+        {
+            foreach (Octree octree in _branches)
+            {
+                octree.Draw();
+            }
+        }
     }
 }
