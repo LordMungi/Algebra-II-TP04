@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -120,7 +121,17 @@ public class Octree
         _entities.Clear();
     }
     private void Merge()
-    { }
+    {
+        foreach (Octree branch in _branches)
+        {
+            foreach (Entity entity in branch._entities)
+            {
+                _entities.Add(entity);
+            }            
+        }
+        Array.Clear(_branches, 0, _branches.Length);
+        _isDivided = false;
+    }
 
     private bool InsertIntoBranch(Entity entity)
     {
