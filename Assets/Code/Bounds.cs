@@ -57,7 +57,7 @@ public struct Bounds
             (
             point.x >= min.x && point.x <= max.x &&
             point.y >= min.y && point.y <= max.y &&
-            point.z >= max.z && point.z <= max.z
+            point.z >= min.z && point.z <= max.z
             );
     }
 
