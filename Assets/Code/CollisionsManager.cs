@@ -4,15 +4,17 @@ using UnityEngine.InputSystem;
 
 public class CollisionsManager : MonoBehaviour
 {
-    [SerializeField] List<Entity> entities = new List<Entity>();
     [SerializeField] Bounds worldBounds;
+    [SerializeField] Entity baseEntity;
 
+    private List<Entity> _entities;
     private Octree _baseOctree;
 
     private bool _debugView = false;
 
     void Start()
     {
+        _entities = new List<Entity>(); 
         worldBounds = new Bounds(worldBounds);
         _baseOctree = new Octree(worldBounds, 10);
     }
@@ -24,6 +26,16 @@ public class CollisionsManager : MonoBehaviour
 
         if (Keyboard.current.tabKey.wasPressedThisFrame)
             _debugView = !_debugView;
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Entity e = Instantiate(baseEntity, transform);
+            e.Relocate(new Vector3(Random.Range(worldBounds.min.x, worldBounds.max.x),
+                                   Random.Range(worldBounds.min.y, worldBounds.max.y),
+                                   Random.Range(worldBounds.min.z, worldBounds.max.z)));
+            _entities.Add(e);
+            _baseOctree.Insert(e);
+        }
     }
 
     private void OnDrawGizmos()
