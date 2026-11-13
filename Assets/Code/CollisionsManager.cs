@@ -10,13 +10,13 @@ public class CollisionsManager : MonoBehaviour
     private List<Entity> _entities;
     private Octree _baseOctree;
 
-    private bool _debugView = false;
+    private bool _debugView = true;
 
     void Start()
     {
         _entities = new List<Entity>(); 
         worldBounds = new Bounds(worldBounds);
-        _baseOctree = new Octree(worldBounds, 10);
+        _baseOctree = new Octree(worldBounds, 4);
     }
 
     void Update()

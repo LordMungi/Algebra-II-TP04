@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Octree 
 {
+    private const uint MAX_LEVEL = 8;
+
     private Bounds _bounds;
     private uint _limit;
     private uint _level;
@@ -16,6 +18,7 @@ public class Octree
     {
         _bounds = bounds;
         _limit = limit;
+        _level = 1;
     }
 
     private Octree(Bounds bounds, uint limit, uint level)
@@ -32,25 +35,20 @@ public class Octree
         {
             if (_isDivided)
             {
-                Debug.Log("Entity in " + entity.transform.position + " inserted into branch.");
-
-                // Meter en una de las 4 ramas
+                InsertIntoBranch(entity);
                 return true;
             }
-            else if (_entities.Count + 1 >= _limit)
+            else if (_entities.Count + 1 >= _limit && _level < MAX_LEVEL)
             {
-                Debug.Log("Must divide");
-
                 Divide();
-                // Meter en una de las 4 ramas
+                InsertIntoBranch(entity);
                 return true;
             }
             else
             {
                 _entities.Add(entity);
-                Debug.Log("Entity in "+ entity.transform.position + " Inserted.");
-
-                return false;
+                Debug.Log("Entity in "+ entity.transform.position + " Inserted into level " + _level + ".");
+                return true;
             }
         }
         return false;
@@ -74,6 +72,21 @@ public class Octree
         _branches[7] = new Octree(new Bounds(center.x, center.y, min.z, max.x, max.y, center.z), _limit, _level + 1);
 
         _isDivided = true;
+
+        foreach (Entity entity in _entities)
+        {
+            InsertIntoBranch(entity);
+        }
+        _entities.Clear();
+    }
+
+    private bool InsertIntoBranch(Entity entity)
+    {
+        foreach (Octree branch in _branches)
+        {
+            if (branch.Insert(entity)) return true;
+        }
+        return false;
     }
 
     public void Draw()
@@ -85,7 +98,6 @@ public class Octree
         Debug.DrawLine(new Vector3(min.x, min.y, max.z), new Vector3(max.x, min.y, max.z), Color.green);
         Debug.DrawLine(new Vector3(max.x, min.y, max.z), new Vector3(max.x, min.y, min.z), Color.green);
         Debug.DrawLine(new Vector3(max.x, min.y, min.z), new Vector3(min.x, min.y, min.z), Color.green);
-        Debug.DrawLine(new Vector3(min.x, min.y, min.z), new Vector3(min.x, max.y, min.z), Color.green);
         Debug.DrawLine(new Vector3(min.x, min.y, min.z), new Vector3(min.x, max.y, min.z), Color.green);
         Debug.DrawLine(new Vector3(min.x, min.y, max.z), new Vector3(min.x, max.y, max.z), Color.green);
         Debug.DrawLine(new Vector3(max.x, min.y, max.z), new Vector3(max.x, max.y, max.z), Color.green);
