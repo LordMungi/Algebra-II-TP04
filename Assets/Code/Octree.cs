@@ -65,7 +65,6 @@ public class Octree
             else
             {
                 _entities.Add(entity);
-                Debug.Log("Entity in "+ entity.transform.position + " Inserted into level " + _level + ".");
                 return true;
             }
         }
@@ -88,7 +87,6 @@ public class Octree
             if (!_bounds.Contains(entity.transform.position))
             {
                 _entities.Remove(entity);
-                Debug.Log("Removed Entity in " + entity.transform.position + " from level " + _level + ".");
                 return true;
             }
         }
@@ -130,6 +128,7 @@ public class Octree
             }            
         }
         Array.Clear(_branches, 0, _branches.Length);
+        _branches = null;
         _isDivided = false;
     }
 
