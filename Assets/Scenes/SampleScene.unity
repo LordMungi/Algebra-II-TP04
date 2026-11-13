@@ -497,6 +497,7 @@ MonoBehaviour:
     min: {x: -5, y: -5, z: -5}
     max: {x: 5, y: 5, z: 5}
   baseEntity: {fileID: 2544128179631407522, guid: 43bcf09b415ed01459262663d2989808, type: 3}
+  maxSpeed: 1
 --- !u!4 &502450866
 Transform:
   m_ObjectHideFlags: 0
