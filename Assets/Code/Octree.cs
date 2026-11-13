@@ -27,20 +27,30 @@ public class Octree
 
     public bool Insert(Entity entity)
     {
+
         if (_bounds.Contains(entity.transform.position))
         {
             if (_isDivided)
             {
+                Debug.Log("Entity in " + entity.transform.position + " inserted into branch.");
+
                 // Meter en una de las 4 ramas
+                return true;
             }
-            else if (_entities.Count >= _limit)
+            else if (_entities.Count + 1 >= _limit)
             {
-                // Dividir
+                Debug.Log("Must divide");
+
+                Divide();
                 // Meter en una de las 4 ramas
+                return true;
             }
             else
             {
-                // Meter en _entities
+                _entities.Add(entity);
+                Debug.Log("Entity in "+ entity.transform.position + " Inserted.");
+
+                return false;
             }
         }
         return false;
