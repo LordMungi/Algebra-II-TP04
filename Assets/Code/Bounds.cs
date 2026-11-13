@@ -10,12 +10,10 @@ public struct Bounds
     public Vector3 Center
     {
         get { return Size / 2 + min; }
-        set { }
     }
     public Vector3 Size
     {
         get { return max - min; }
-        set { }
     }
 
     public Bounds(Bounds other)

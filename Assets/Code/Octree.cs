@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Octree 
@@ -13,6 +14,22 @@ public class Octree
 
     private List<Entity> _entities = new List<Entity>();
     private Octree[] _branches;
+
+    public int TotalCount
+    {
+        get
+        {
+            int count = 0;
+            if (_isDivided)
+            {
+                foreach (Octree branch in _branches)
+                {
+                    count += branch.TotalCount;
+                }
+            }
+            return count + _entities.Count;
+        }
+    }
 
     public Octree(Bounds bounds, uint limit)
     {
@@ -53,6 +70,29 @@ public class Octree
         }
         return false;
     }
+    public bool TryRemove(Entity entity)
+    {
+        if (_isDivided)
+        {
+            if (TryRemoveInBranch(entity))
+            {
+                if (TotalCount < _limit)
+                    Merge();
+                return true;
+            }
+        }
+
+        if (_entities.Contains(entity))
+        {
+            if (!_bounds.Contains(entity.transform.position))
+            {
+                _entities.Remove(entity);
+                Debug.Log("Removed Entity in " + entity.transform.position + " from level " + _level + ".");
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void Divide()
     {
@@ -79,12 +119,22 @@ public class Octree
         }
         _entities.Clear();
     }
+    private void Merge()
+    { }
 
     private bool InsertIntoBranch(Entity entity)
     {
         foreach (Octree branch in _branches)
         {
             if (branch.Insert(entity)) return true;
+        }
+        return false;
+    }
+    private bool TryRemoveInBranch(Entity entity)
+    {
+        foreach (Octree branch in _branches)
+        {
+            if (branch.TryRemove(entity)) return true;
         }
         return false;
     }
