@@ -84,6 +84,15 @@ public struct Bounds
         max += translation;
     }
 
+    public void Scale(Vector3 factor)
+    {
+        Vector3 newHalfSize = Vector3.Scale(Size, factor) / 2;
+
+        Bounds newBounds = new Bounds(Center.x - newHalfSize.x, Center.y - newHalfSize.y, Center.z - newHalfSize.z,
+                                      Center.x + newHalfSize.x, Center.y + newHalfSize.y, Center.z + newHalfSize.z);
+        this = newBounds;
+    }
+
     private void InvertIfImpossible(ref float minf, ref float maxf)
     {
         float aux = 0;
@@ -102,4 +111,12 @@ public struct Bounds
         result.max += b;
         return result;
     }
+    public static Bounds operator *(Bounds a, float b)
+    {
+        Bounds result = a;
+        result.min *= b;
+        result.max *= b;
+        return result;
+    }
+
 }

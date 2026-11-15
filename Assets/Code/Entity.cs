@@ -18,6 +18,7 @@ public class Entity : MonoBehaviour
         MeshFilter mesh = GetComponent<MeshFilter>();
         AABB = new Bounds(mesh.mesh.bounds);
         AABB.Move(transform.position);
+        AABB.Scale(transform.lossyScale);
         radius = Mathf.Abs((transform.position - AABB.max).magnitude) * 2;
     }
 
