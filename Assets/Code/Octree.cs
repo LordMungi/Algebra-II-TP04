@@ -114,7 +114,7 @@ public class Octree <T> where T : IPoint
         return null;
     }
 
-    public void Reposition(Vector3 position)
+    public void Relocate(Vector3 position)
     {
         _offset = position;
         _bounds = _localBounds + _offset;
@@ -123,7 +123,7 @@ public class Octree <T> where T : IPoint
         {
             foreach (Octree<T> branch in _branches)
             {
-                branch.Reposition(position);
+                branch.Relocate(position);
             }
         }
     }

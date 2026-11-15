@@ -15,14 +15,18 @@ public class Entity : MonoBehaviour, IPoint
 
     private List<Triangle> _triangles = new List<Triangle>();
 
+    private Octree<Triangle> _meshTree;
+
     public void Initialize(Vector3 position, Vector3 velocity)
     {
         transform.position = position;
         this.velocity = velocity;
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         AABB = new Bounds(mesh.bounds);
-        AABB.Move(transform.position);
         AABB.Scale(transform.lossyScale);
+        _meshTree = new Octree<Triangle>(AABB, 10);
+        AABB.Move(transform.position);
+
         radius = Mathf.Abs((transform.position - AABB.max).magnitude) * 2;
         for (int i = 0; i < mesh.triangles.Length / 3; i++)
         {
@@ -31,13 +35,17 @@ public class Entity : MonoBehaviour, IPoint
                                         Vector3.Scale(mesh.vertices[mesh.triangles[index + 1]], transform.lossyScale), 
                                         Vector3.Scale(mesh.vertices[mesh.triangles[index + 2]], transform.lossyScale)));
         }
+
         foreach (Triangle triangle in _triangles)
         {
+            _meshTree.Insert(triangle);
             triangle.SetOffset(transform.position);
         }
+        _meshTree.Relocate(transform.position);
+        Debug.Log("Tree created. Points: "+ _meshTree.TotalCount);
     }
 
-    public void Move()
+    public void Update()
     {
         if (!_isPaused)
         {
@@ -56,6 +64,8 @@ public class Entity : MonoBehaviour, IPoint
             triangle.SetOffset(transform.position);
             triangle.Draw();
         }
+        _meshTree.Relocate(transform.position);
+        _meshTree.Draw();
     }
 
     public void SetReverse(bool value)

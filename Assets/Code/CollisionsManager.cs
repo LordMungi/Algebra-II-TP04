@@ -64,7 +64,7 @@ public class CollisionsManager : MonoBehaviour
             entity.SetFast(_isFast);
             entity.SetPause(_isPaused);
 
-                entity.Move();
+                entity.Update();
             if (entity.transform.position.x <= _worldBounds.min.x)
             {
                 entity.transform.position = new Vector3(_worldBounds.min.x, entity.transform.position.y, entity.transform.position.z);
@@ -128,7 +128,7 @@ public class CollisionsManager : MonoBehaviour
         _worldBounds.min = localBounds.min + transform.position;
         _worldBounds.max = localBounds.max + transform.position;
 
-        _baseOctree.Reposition(transform.position);
+        _baseOctree.Relocate(transform.position);
     }
 
     private void OnDrawGizmos()
