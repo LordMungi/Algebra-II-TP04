@@ -15,7 +15,9 @@ public class Entity : MonoBehaviour
 
     public void Move()
     {
-        transform.position += velocity * Time.deltaTime;
+        Vector3 delta = velocity * Time.deltaTime;
+        transform.position += delta;
+        AABB.Move(delta);
     }
 
     private void OnDrawGizmos()

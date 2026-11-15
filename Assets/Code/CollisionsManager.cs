@@ -91,6 +91,7 @@ public class CollisionsManager : MonoBehaviour
                 if (entity == other) continue;
                 if (entity.AABB.Collides(other.AABB))
                 {
+                    Debug.Log("Collision!");
                     entity.isColliding = true;
                     other.isColliding = true;
                 }

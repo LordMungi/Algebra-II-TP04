@@ -77,6 +77,12 @@ public struct Bounds
             Center.z - Size.z / 2 < other.Center.z + other.Size.z / 2;
     }
 
+    public void Move(Vector3 translation)
+    {
+        min += translation;
+        max += translation;
+    }
+
     private void InvertIfImpossible(ref float minf, ref float maxf)
     {
         float aux = 0;
