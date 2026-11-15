@@ -12,7 +12,7 @@ public class CollisionsManager : MonoBehaviour
     private Bounds _worldBounds;
 
     private List<Entity> _entities;
-    private Octree _baseOctree;
+    private Octree<Entity> _baseOctree;
 
     private bool _debugView = true;
 
@@ -24,7 +24,7 @@ public class CollisionsManager : MonoBehaviour
     {
         _entities = new List<Entity>(); 
         _worldBounds = new Bounds(localBounds);
-        _baseOctree = new Octree(_worldBounds, 4);
+        _baseOctree = new Octree<Entity>(_worldBounds, 4);
     }
 
     void Update()

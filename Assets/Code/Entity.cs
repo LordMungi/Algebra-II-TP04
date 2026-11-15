@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public class Entity : MonoBehaviour, IPoint
 {
     public Vector3 velocity;
     public Bounds AABB;
@@ -67,5 +67,10 @@ public class Entity : MonoBehaviour
         else
             Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, radius);
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;
     }
 }

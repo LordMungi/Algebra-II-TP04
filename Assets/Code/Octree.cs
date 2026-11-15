@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
-public class Octree 
+public class Octree <T> where T : IPoint
 {
     private const uint MAX_LEVEL = 8;
 
@@ -16,8 +15,8 @@ public class Octree
 
     private bool _isDivided = false;
 
-    private List<Entity> _entities = new List<Entity>();
-    private Octree[] _branches;
+    private List<T> _entities = new List<T>();
+    private Octree<T>[] _branches;
 
     public int TotalCount
     {
@@ -26,7 +25,7 @@ public class Octree
             int count = 0;
             if (_isDivided)
             {
-                foreach (Octree branch in _branches)
+                foreach (Octree<T> branch in _branches)
                 {
                     count += branch.TotalCount;
                 }
@@ -53,10 +52,10 @@ public class Octree
         _offset = position;
     }
 
-    public bool Insert(Entity entity)
+    public bool Insert(T entity)
     {
 
-        if (_bounds.Contains(entity.transform.position))
+        if (_bounds.Contains(entity.GetPosition()))
         {
             if (_isDivided)
             {
@@ -77,7 +76,7 @@ public class Octree
         }
         return false;
     }
-    public bool TryRemove(Entity entity)
+    public bool TryRemove(T entity)
     {
         if (_isDivided)
         {
@@ -91,7 +90,7 @@ public class Octree
 
         if (_entities.Contains(entity))
         {
-            if (!_bounds.Contains(entity.transform.position))
+            if (!_bounds.Contains(entity.GetPosition()))
             {
                 _entities.Remove(entity);
                 return true;
@@ -100,16 +99,16 @@ public class Octree
         return false;
     }
 
-    public List<Entity> GetEntitiesInSameArea(Entity entity)
+    public List<T> GetEntitiesInSameArea(T entity)
     {
         if (_isDivided)
-            foreach (Octree branch in _branches)
+            foreach (Octree<T> branch in _branches)
             {
-                List<Entity> aux = branch.GetEntitiesInSameArea(entity);
+                List<T> aux = branch.GetEntitiesInSameArea(entity);
                 if (aux != null)
                     return aux;
             }
-        else if (_bounds.Contains(entity.transform.position))
+        else if (_bounds.Contains(entity.GetPosition()))
             return _entities;
 
         return null;
@@ -122,7 +121,7 @@ public class Octree
 
         if (_isDivided)
         {
-            foreach (Octree branch in _branches)
+            foreach (Octree<T> branch in _branches)
             {
                 branch.Reposition(position);
             }
@@ -131,32 +130,32 @@ public class Octree
 
     private void Divide()
     {
-        _branches = new Octree[8];
+        _branches = new Octree<T>[8];
 
         Vector3 min = _localBounds.min;
         Vector3 max = _localBounds.max;
         Vector3 center = _localBounds.Center;
 
         Bounds newBounds = new Bounds(min.x, min.y, min.z, center.x, center.y, center.z);
-        _branches[0] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[0] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(min.x, min.y, center.z, center.x, center.y, max.z);
-        _branches[1] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[1] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(center.x, min.y, center.z, max.x, center.y, max.z);
-        _branches[2] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[2] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(center.x, min.y, min.z, max.x, center.y, center.z);
-        _branches[3] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[3] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(min.x, center.y, min.z, center.x, max.y, center.z);
-        _branches[4] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[4] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(min.x, center.y, center.z, center.x, max.y, max.z);
-        _branches[5] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[5] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(center.x, center.y, center.z, max.x, max.y, max.z);
-        _branches[6] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[6] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
         newBounds = new Bounds(center.x, center.y, min.z, max.x, max.y, center.z);
-        _branches[7] = new Octree(newBounds, _limit, _level + 1, _offset);
+        _branches[7] = new Octree<T>(newBounds, _limit, _level + 1, _offset);
 
         _isDivided = true;
 
-        foreach (Entity entity in _entities)
+        foreach (T entity in _entities)
         {
             InsertIntoBranch(entity);
         }
@@ -164,9 +163,9 @@ public class Octree
     }
     private void Merge()
     {
-        foreach (Octree branch in _branches)
+        foreach (Octree<T> branch in _branches)
         {
-            foreach (Entity entity in branch._entities)
+            foreach (T entity in branch._entities)
             {
                 _entities.Add(entity);
             }            
@@ -176,17 +175,17 @@ public class Octree
         _isDivided = false;
     }
 
-    private bool InsertIntoBranch(Entity entity)
+    private bool InsertIntoBranch(T entity)
     {
-        foreach (Octree branch in _branches)
+        foreach (Octree<T> branch in _branches)
         {
             if (branch.Insert(entity)) return true;
         }
         return false;
     }
-    private bool TryRemoveInBranch(Entity entity)
+    private bool TryRemoveInBranch(T entity)
     {
-        foreach (Octree branch in _branches)
+        foreach (Octree<T> branch in _branches)
         {
             if (branch.TryRemove(entity)) return true;
         }
@@ -217,7 +216,7 @@ public class Octree
 
         if (_isDivided)
         {
-            foreach (Octree octree in _branches)
+            foreach (Octree<T> octree in _branches)
             {
                 octree.Draw();
             }
