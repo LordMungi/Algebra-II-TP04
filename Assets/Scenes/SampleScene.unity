@@ -153,8 +153,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380.476, y: -117.844}
-  m_SizeDelta: {x: 712.147, y: 202.084}
+  m_AnchoredPosition: {x: 632.3943, y: -533.8926}
+  m_SizeDelta: {x: 1215.984, y: 1034.182}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &32128314
 MonoBehaviour:
@@ -189,9 +189,22 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '(TAB) Toggle wireframe
+  m_Text: '1 - Toggle Octree
 
-    (SPACE) Instantiate Entity'
+    2 - Toggle Entity Colliders
+
+    3 - Toggle Entity
+    Octree
+
+    4 - Toggle Entity Triangles
+
+
+    Q - Speed-
+
+    E - Speed+
+
+    R
+    - Reverse'
 --- !u!222 &32128315
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -494,8 +507,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollisionsManager
   localBounds:
-    min: {x: -5, y: -5, z: -5}
-    max: {x: 5, y: 5, z: 5}
+    min: {x: -2, y: -2, z: -2}
+    max: {x: 2, y: 2, z: 2}
   baseEntity: {fileID: 2544128179631407522, guid: 43bcf09b415ed01459262663d2989808, type: 3}
   maxSpeed: 1
 --- !u!4 &502450866

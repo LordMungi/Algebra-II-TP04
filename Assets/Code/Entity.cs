@@ -13,15 +13,20 @@ public class Entity : MonoBehaviour, IPoint
     private bool _isPaused = false;
     private bool _isReversed = false;
 
+    public bool showColliders = false;
+    public bool showOctree = false;
+    public bool showTriangles = false;
+
     public List<Triangle> triangles = new List<Triangle>();
 
     public Octree<Triangle> meshTree;
+    public Mesh mesh;
 
     public void Initialize(Vector3 position, Vector3 velocity)
     {
         transform.position = position;
         this.velocity = velocity;
-        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        mesh = GetComponent<MeshFilter>().mesh;
         AABB = new Bounds(mesh.bounds);
         AABB.Scale(transform.lossyScale);
         meshTree = new Octree<Triangle>(AABB, 10);
@@ -61,10 +66,13 @@ public class Entity : MonoBehaviour, IPoint
         foreach (Triangle triangle in triangles)
         {
             triangle.SetOffset(transform.position);
-            triangle.Draw();
+            if (showTriangles)
+                triangle.Draw();
+            triangle.isColliding = false;
         }
         meshTree.Relocate(transform.position);
-        meshTree.Draw();
+        if (showOctree)
+            meshTree.Draw();
     }
 
     public void SetReverse(bool value)
@@ -88,17 +96,21 @@ public class Entity : MonoBehaviour, IPoint
 
     private void OnDrawGizmos()
     {
-        if (isCollidingAABB)
-            Gizmos.color = Color.red;
-        else
-            Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(transform.position, AABB.Size);
+        if (showColliders)
+        {
+            if (isCollidingAABB)
+                Gizmos.color = Color.red;
+            else
+                Gizmos.color = Color.blue;
 
-        if (isCollidingRadius)
-            Gizmos.color = Color.red;
-        else
-            Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, radius);
+            Gizmos.DrawWireCube(transform.position, AABB.Size);
+
+            if (isCollidingRadius)
+                Gizmos.color = Color.red;
+            else
+                Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, radius);
+        }
     }
 
     public Vector3 GetPosition()

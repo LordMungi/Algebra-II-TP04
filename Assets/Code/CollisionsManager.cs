@@ -14,7 +14,11 @@ public class CollisionsManager : MonoBehaviour
     private List<Entity> _entities;
     private Octree<Entity> _baseOctree;
 
-    private bool _debugView = true;
+    private bool _octreeWireframe = true;
+    private bool _worldBoundsWireframe = true;
+    private bool _modelColliders = true;
+    private bool _modelOctree = true;
+    private bool _modelTriangles = true;
 
     private bool _isPaused = false;
     private bool _isFast = false;
@@ -29,11 +33,8 @@ public class CollisionsManager : MonoBehaviour
 
     void Update()
     {
-        if (_debugView)
+        if (_octreeWireframe)
             _baseOctree.Draw();
-
-        if (Keyboard.current.tabKey.wasPressedThisFrame)
-            _debugView = !_debugView;
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
@@ -47,6 +48,21 @@ public class CollisionsManager : MonoBehaviour
             _entities.Add(e);
             _baseOctree.Insert(e);
         }
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+            _octreeWireframe = !_octreeWireframe;
+
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+            _worldBoundsWireframe = !_worldBoundsWireframe;
+
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
+            _modelColliders = !_modelColliders;
+
+        if (Keyboard.current.digit4Key.wasPressedThisFrame)
+            _modelOctree = !_modelOctree;
+
+        if (Keyboard.current.digit5Key.wasPressedThisFrame)
+            _modelTriangles = !_modelTriangles;
 
         if (Keyboard.current.rKey.wasPressedThisFrame)
             _isReversed = !_isReversed;
@@ -64,7 +80,11 @@ public class CollisionsManager : MonoBehaviour
             entity.SetFast(_isFast);
             entity.SetPause(_isPaused);
 
-                entity.Update();
+            entity.showColliders = _modelColliders;
+            entity.showOctree = _modelOctree;
+            entity.showTriangles = _modelTriangles;
+
+            entity.Update();
             if (entity.transform.position.x <= _worldBounds.min.x)
             {
                 entity.transform.position = new Vector3(_worldBounds.min.x, entity.transform.position.y, entity.transform.position.z);
@@ -147,8 +167,11 @@ public class CollisionsManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(localBounds.Center, localBounds.Size);
+        if (_worldBoundsWireframe)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(localBounds.Center, localBounds.Size);
+        }
     }
 
 

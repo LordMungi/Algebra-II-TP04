@@ -36,7 +36,7 @@ public class Triangle : IPoint
     {
         Color c = Color.yellow;
         if (isColliding)
-            c = Color.violet;
+            c = Color.red;
 
         Debug.DrawLine(_v0 + offset, _v1 + offset, c);
         Debug.DrawLine(_v1 + offset, _v2 + offset, c);
