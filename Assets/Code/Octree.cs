@@ -7,9 +7,12 @@ public class Octree
 {
     private const uint MAX_LEVEL = 8;
 
+    private Bounds _localBounds;
     private Bounds _bounds;
     private uint _limit;
     private uint _level;
+
+    private Vector3 _offset;
 
     private bool _isDivided = false;
 
@@ -35,15 +38,19 @@ public class Octree
     public Octree(Bounds bounds, uint limit)
     {
         _bounds = bounds;
+        _localBounds = bounds; 
         _limit = limit;
         _level = 1;
+        _offset = Vector3.zero;
     }
 
-    private Octree(Bounds bounds, uint limit, uint level)
+    private Octree(Bounds bounds, uint limit, uint level, Vector3 position)
     {
-        _bounds = bounds;
+        _bounds = bounds + position;
+        _localBounds = bounds;
         _limit = limit;
         _level = level;
+        _offset = position;
     }
 
     public bool Insert(Entity entity)
@@ -108,23 +115,44 @@ public class Octree
         return null;
     }
 
+    public void Reposition(Vector3 position)
+    {
+        _offset = position;
+        _bounds = _localBounds + _offset;
+
+        if (_isDivided)
+        {
+            foreach (Octree branch in _branches)
+            {
+                branch.Reposition(position);
+            }
+        }
+    }
 
     private void Divide()
     {
         _branches = new Octree[8];
 
-        Vector3 min = _bounds.min;
-        Vector3 max = _bounds.max;
-        Vector3 center = _bounds.Center;
+        Vector3 min = _localBounds.min;
+        Vector3 max = _localBounds.max;
+        Vector3 center = _localBounds.Center;
 
-        _branches[0] = new Octree(new Bounds(min.x, min.y, min.z, center.x, center.y, center.z), _limit, _level + 1);
-        _branches[1] = new Octree(new Bounds(min.x, min.y, center.z, center.x, center.y, max.z), _limit, _level + 1);
-        _branches[2] = new Octree(new Bounds(center.x, min.y, center.z, max.x, center.y, max.z), _limit, _level + 1);
-        _branches[3] = new Octree(new Bounds(center.x, min.y, min.z, max.x, center.y, center.z), _limit, _level + 1);
-        _branches[4] = new Octree(new Bounds(min.x, center.y, min.z, center.x, max.y, center.z), _limit, _level + 1);
-        _branches[5] = new Octree(new Bounds(min.x, center.y, center.z, center.x, max.y, max.z), _limit, _level + 1);
-        _branches[6] = new Octree(new Bounds(center.x, center.y, center.z, max.x, max.y, max.z), _limit, _level + 1);
-        _branches[7] = new Octree(new Bounds(center.x, center.y, min.z, max.x, max.y, center.z), _limit, _level + 1);
+        Bounds newBounds = new Bounds(min.x, min.y, min.z, center.x, center.y, center.z);
+        _branches[0] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(min.x, min.y, center.z, center.x, center.y, max.z);
+        _branches[1] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(center.x, min.y, center.z, max.x, center.y, max.z);
+        _branches[2] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(center.x, min.y, min.z, max.x, center.y, center.z);
+        _branches[3] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(min.x, center.y, min.z, center.x, max.y, center.z);
+        _branches[4] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(min.x, center.y, center.z, center.x, max.y, max.z);
+        _branches[5] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(center.x, center.y, center.z, max.x, max.y, max.z);
+        _branches[6] = new Octree(newBounds, _limit, _level + 1, _offset);
+        newBounds = new Bounds(center.x, center.y, min.z, max.x, max.y, center.z);
+        _branches[7] = new Octree(newBounds, _limit, _level + 1, _offset);
 
         _isDivided = true;
 
@@ -182,6 +210,10 @@ public class Octree
         Debug.DrawLine(new Vector3(min.x, max.y, max.z), new Vector3(max.x, max.y, max.z), Color.green);
         Debug.DrawLine(new Vector3(max.x, max.y, max.z), new Vector3(max.x, max.y, min.z), Color.green);
         Debug.DrawLine(new Vector3(max.x, max.y, min.z), new Vector3(min.x, max.y, min.z), Color.green);
+
+        //Debug.DrawLine(_bounds.Center + _offset - Vector3.up * 0.5f, _bounds.Center + _offset + Vector3.up * 0.5f, Color.red);
+        //Debug.DrawLine(_bounds.Center + _offset - Vector3.right * 0.5f, _bounds.Center + _offset + Vector3.right * 0.5f, Color.red);
+        //Debug.DrawLine(_bounds.Center + _offset - Vector3.forward * 0.5f, _bounds.Center + _offset + Vector3.forward * 0.5f, Color.red);
 
         if (_isDivided)
         {

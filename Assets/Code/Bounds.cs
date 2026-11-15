@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 
 [Serializable]
@@ -92,5 +93,13 @@ public struct Bounds
             maxf = minf;
             minf = aux; 
         }
+    }
+
+    public static Bounds operator +(Bounds a, Vector3 b)
+    {
+        Bounds result = a;
+        result.min += b;
+        result.max += b;
+        return result;
     }
 }

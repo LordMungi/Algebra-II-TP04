@@ -1,12 +1,15 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CollisionsManager : MonoBehaviour
 {
-    [SerializeField] Bounds worldBounds;
+    [SerializeField] Bounds localBounds;
     [SerializeField] Entity baseEntity;
     [SerializeField] float maxSpeed;
+
+    private Bounds _worldBounds;
 
     private List<Entity> _entities;
     private Octree _baseOctree;
@@ -20,8 +23,8 @@ public class CollisionsManager : MonoBehaviour
     void Start()
     {
         _entities = new List<Entity>(); 
-        worldBounds = new Bounds(worldBounds);
-        _baseOctree = new Octree(worldBounds, 4);
+        _worldBounds = new Bounds(localBounds);
+        _baseOctree = new Octree(_worldBounds, 4);
     }
 
     void Update()
@@ -35,9 +38,9 @@ public class CollisionsManager : MonoBehaviour
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             Entity e = Instantiate(baseEntity, transform);
-            e.Initialize(new Vector3(Random.Range(worldBounds.min.x, worldBounds.max.x),
-                                     Random.Range(worldBounds.min.y, worldBounds.max.y),
-                                     Random.Range(worldBounds.min.z, worldBounds.max.z)),
+            e.Initialize(new Vector3(Random.Range(_worldBounds.min.x, _worldBounds.max.x),
+                                     Random.Range(_worldBounds.min.y, _worldBounds.max.y),
+                                     Random.Range(_worldBounds.min.z, _worldBounds.max.z)),
                          new Vector3(Random.Range(-maxSpeed, maxSpeed),
                                      Random.Range(-maxSpeed, maxSpeed),
                                      Random.Range(-maxSpeed, maxSpeed)));
@@ -62,36 +65,36 @@ public class CollisionsManager : MonoBehaviour
             entity.SetPause(_isPaused);
 
                 entity.Move();
-            if (entity.transform.position.x <= worldBounds.min.x)
+            if (entity.transform.position.x <= _worldBounds.min.x)
             {
-                entity.transform.position = new Vector3(worldBounds.min.x, entity.transform.position.y, entity.transform.position.z);
+                entity.transform.position = new Vector3(_worldBounds.min.x, entity.transform.position.y, entity.transform.position.z);
                 entity.velocity.x = entity.velocity.x * -1;
             }
-            if (entity.transform.position.x >= worldBounds.max.x)
+            if (entity.transform.position.x >= _worldBounds.max.x)
             {
-                entity.transform.position = new Vector3(worldBounds.max.x, entity.transform.position.y, entity.transform.position.z);
+                entity.transform.position = new Vector3(_worldBounds.max.x, entity.transform.position.y, entity.transform.position.z);
                 entity.velocity.x = entity.velocity.x * -1;
             }
 
-            if (entity.transform.position.y <= worldBounds.min.y)
+            if (entity.transform.position.y <= _worldBounds.min.y)
             {
-                entity.transform.position = new Vector3(entity.transform.position.x, worldBounds.min.y, entity.transform.position.z);
+                entity.transform.position = new Vector3(entity.transform.position.x, _worldBounds.min.y, entity.transform.position.z);
                 entity.velocity.y = entity.velocity.y * -1;
             }
-            if (entity.transform.position.y >= worldBounds.max.y)
+            if (entity.transform.position.y >= _worldBounds.max.y)
             {
-                entity.transform.position = new Vector3(entity.transform.position.x, worldBounds.max.y, entity.transform.position.z);
+                entity.transform.position = new Vector3(entity.transform.position.x, _worldBounds.max.y, entity.transform.position.z);
                 entity.velocity.y = entity.velocity.y * -1;
             }
 
-            if (entity.transform.position.z <= worldBounds.min.z)
+            if (entity.transform.position.z <= _worldBounds.min.z)
             {
-                entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y,worldBounds.min.z);
+                entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y,_worldBounds.min.z);
                 entity.velocity.z = entity.velocity.z * -1;
             }
-            if (entity.transform.position.z >= worldBounds.max.z)
+            if (entity.transform.position.z >= _worldBounds.max.z)
             {
-                entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y, worldBounds.max.z);
+                entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y, _worldBounds.max.z);
                 entity.velocity.z = entity.velocity.z * -1;
             }
 
@@ -113,11 +116,16 @@ public class CollisionsManager : MonoBehaviour
                 }
             }
         }
+
+        _worldBounds.min = localBounds.min + transform.position;
+        _worldBounds.max = localBounds.max + transform.position;
+
+        _baseOctree.Reposition(transform.position);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(worldBounds.Center, worldBounds.Size);
+        Gizmos.DrawWireCube(localBounds.Center, localBounds.Size);
     }
 }
