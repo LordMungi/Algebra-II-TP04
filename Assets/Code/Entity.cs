@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour, IPoint
@@ -11,15 +13,26 @@ public class Entity : MonoBehaviour, IPoint
     private bool _isPaused = false;
     private bool _isReversed = false;
 
+    private List<Triangle> _triangles = new List<Triangle>();
+
     public void Initialize(Vector3 position, Vector3 velocity)
     {
         transform.position = position;
         this.velocity = velocity;
-        MeshFilter mesh = GetComponent<MeshFilter>();
-        AABB = new Bounds(mesh.mesh.bounds);
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        AABB = new Bounds(mesh.bounds);
         AABB.Move(transform.position);
         AABB.Scale(transform.lossyScale);
         radius = Mathf.Abs((transform.position - AABB.max).magnitude) * 2;
+        for (int i = 0; i < mesh.triangles.Length / 3; i++)
+        {
+            int index = i * 3;
+            _triangles.Add(new Triangle(mesh.vertices[mesh.triangles[index]], mesh.vertices[mesh.triangles[index + 1]], mesh.vertices[mesh.triangles[index + 2]]));
+        }
+        foreach (Triangle triangle in _triangles)
+        {
+            triangle.SetOffset(transform.position);
+        }
     }
 
     public void Move()
@@ -32,6 +45,14 @@ public class Entity : MonoBehaviour, IPoint
 
             transform.position += delta;
             AABB.Move(delta);
+            foreach (Triangle triangle in _triangles)
+            {
+            }
+        }
+        foreach (Triangle triangle in _triangles)
+        {
+            triangle.SetOffset(transform.position);
+            triangle.Draw();
         }
     }
 
