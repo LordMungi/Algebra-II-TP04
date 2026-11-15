@@ -27,7 +27,9 @@ public class Entity : MonoBehaviour, IPoint
         for (int i = 0; i < mesh.triangles.Length / 3; i++)
         {
             int index = i * 3;
-            _triangles.Add(new Triangle(mesh.vertices[mesh.triangles[index]], mesh.vertices[mesh.triangles[index + 1]], mesh.vertices[mesh.triangles[index + 2]]));
+            _triangles.Add(new Triangle(Vector3.Scale(mesh.vertices[mesh.triangles[index]], transform.lossyScale), 
+                                        Vector3.Scale(mesh.vertices[mesh.triangles[index + 1]], transform.lossyScale), 
+                                        Vector3.Scale(mesh.vertices[mesh.triangles[index + 2]], transform.lossyScale)));
         }
         foreach (Triangle triangle in _triangles)
         {
