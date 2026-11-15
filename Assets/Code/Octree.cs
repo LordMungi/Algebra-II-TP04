@@ -93,6 +93,22 @@ public class Octree
         return false;
     }
 
+    public List<Entity> GetEntitiesInSameArea(Entity entity)
+    {
+        if (_isDivided)
+            foreach (Octree branch in _branches)
+            {
+                List<Entity> aux = branch.GetEntitiesInSameArea(entity);
+                if (aux != null)
+                    return aux;
+            }
+        else if (_bounds.Contains(entity.transform.position))
+            return _entities;
+
+        return null;
+    }
+
+
     private void Divide()
     {
         _branches = new Octree[8];

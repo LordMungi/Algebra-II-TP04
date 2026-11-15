@@ -41,6 +41,7 @@ public class CollisionsManager : MonoBehaviour
             _baseOctree.Insert(e);
         }
 
+        // Move
         foreach (Entity entity in _entities)
         {
             entity.Move();
@@ -79,6 +80,21 @@ public class CollisionsManager : MonoBehaviour
 
             if (_baseOctree.TryRemove(entity))
                 _baseOctree.Insert(entity);
+        }
+
+        // Collide
+        foreach (Entity entity in _entities)
+        {
+            entity.isColliding = false;
+            foreach (Entity other in _baseOctree.GetEntitiesInSameArea(entity))
+            {
+                if (entity == other) continue;
+                if (entity.AABB.Collides(other.AABB))
+                {
+                    entity.isColliding = true;
+                    other.isColliding = true;
+                }
+            }
         }
     }
 

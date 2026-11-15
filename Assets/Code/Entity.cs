@@ -4,6 +4,7 @@ public class Entity : MonoBehaviour
 {
     public Vector3 velocity;
     public Bounds AABB;
+    public bool isColliding = false;
     public void Initialize(Vector3 position, Vector3 velocity)
     {
         transform.position = position;
@@ -19,6 +20,11 @@ public class Entity : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position, Vector3.Scale(AABB.Size, transform.lossyScale));
+        if (isColliding)
+            Gizmos.color = Color.red;
+        else
+            Gizmos.color = Color.blue;
+
+        Gizmos.DrawWireCube(transform.position, AABB.Size);
     }
 }

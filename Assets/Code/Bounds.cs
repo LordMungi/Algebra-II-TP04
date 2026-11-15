@@ -62,11 +62,19 @@ public struct Bounds
     public bool Contains(Vector3 point)
     {
         return 
-            (
             point.x >= min.x && point.x <= max.x &&
             point.y >= min.y && point.y <= max.y &&
-            point.z >= min.z && point.z <= max.z
-            );
+            point.z >= min.z && point.z <= max.z;
+    }
+    public bool Collides(Bounds other)
+    {
+        return
+            Center.x + Size.x / 2 > other.Center.x - other.Size.x / 2 &&
+            Center.x - Size.x / 2 < other.Center.x + other.Size.x / 2 &&
+            Center.y + Size.y / 2 > other.Center.y - other.Size.y / 2 &&
+            Center.y - Size.y / 2 < other.Center.y + other.Size.y / 2 &&
+            Center.z + Size.z / 2 > other.Center.z - other.Size.z / 2 &&
+            Center.z - Size.z / 2 < other.Center.z + other.Size.z / 2;
     }
 
     private void InvertIfImpossible(ref float minf, ref float maxf)
