@@ -21,7 +21,7 @@ public class CollisionsManager : MonoBehaviour
     private bool _modelTriangles = true;
 
     private bool _isPaused = false;
-    private bool _isFast = false;
+    private int _entitySpeed = 2;
     private bool _isReversed = false;
 
     void Start()
@@ -64,21 +64,22 @@ public class CollisionsManager : MonoBehaviour
         if (Keyboard.current.digit5Key.wasPressedThisFrame)
             _modelTriangles = !_modelTriangles;
 
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+            _isPaused = !_isPaused;
+        if (Keyboard.current.wKey.wasPressedThisFrame)
+            _entitySpeed = Mathf.Max(_entitySpeed - 1, 1);
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+            _entitySpeed = Mathf.Min(_entitySpeed + 1, 4);
+
         if (Keyboard.current.rKey.wasPressedThisFrame)
             _isReversed = !_isReversed;
-
-        if (Keyboard.current.qKey.wasPressedThisFrame)
-            _isFast = !_isFast;
-
-        if (Keyboard.current.wKey.wasPressedThisFrame)
-            _isPaused = !_isPaused;
 
         // Move
         foreach (Entity entity in _entities)
         {
             entity.SetReverse(_isReversed);
-            entity.SetFast(_isFast);
-            entity.SetPause(_isPaused);
+            entity.SetFast(_entitySpeed);
+            entity.SetPaused(_isPaused);
 
             entity.showColliders = _modelColliders;
             entity.showOctree = _modelOctree;

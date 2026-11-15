@@ -9,9 +9,9 @@ public class Entity : MonoBehaviour, IPoint
     public float radius;
     public bool isCollidingAABB = false;
     public bool isCollidingRadius = false;
-    private bool _isFast = false;
-    private bool _isPaused = false;
+    private int _speed = 0;
     private bool _isReversed = false;
+    private bool _isPaused = false;
 
     public bool showColliders = false;
     public bool showOctree = false;
@@ -53,8 +53,13 @@ public class Entity : MonoBehaviour, IPoint
     {
         if (!_isPaused)
         {
-            Vector3 delta = velocity * Time.deltaTime;
-            if (_isFast) delta *= 2;
+            Vector3 delta = velocity * Time.deltaTime / 2;
+
+            for (int i = 1; i < _speed; i++)
+            {
+                delta *= 2;
+            }
+
             if (_isReversed) delta *= -1;
 
             transform.position += delta;
@@ -80,15 +85,16 @@ public class Entity : MonoBehaviour, IPoint
         _isReversed = value;
     }
 
-    public void SetFast(bool value)
+    public void SetFast(int value)
     {
-        _isFast = value;
+        _speed = value;
     }
 
-    public void SetPause(bool value)
+    public void SetPaused(bool value)
     {
-        _isPaused = value;
+        _isPaused = value; 
     }
+
     public bool IsInRadiusOfOther(Entity other)
     {
         return Mathf.Abs((transform.position - other.transform.position).magnitude) <= radius + other.radius;

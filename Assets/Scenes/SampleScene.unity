@@ -199,12 +199,14 @@ MonoBehaviour:
     4 - Toggle Entity Triangles
 
 
-    Q - Speed-
+    Q - Pause
 
-    E - Speed+
+    W - Speed-
 
-    R
-    - Reverse'
+    E
+    - Speed+
+
+    R - Reverse'
 --- !u!222 &32128315
 CanvasRenderer:
   m_ObjectHideFlags: 0
