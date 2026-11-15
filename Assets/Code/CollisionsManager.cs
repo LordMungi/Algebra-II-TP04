@@ -105,14 +105,22 @@ public class CollisionsManager : MonoBehaviour
         // Collide
         foreach (Entity entity in _entities)
         {
-            entity.isColliding = false;
+            entity.isCollidingAABB = false;
+            entity.isCollidingRadius = false;
+
             foreach (Entity other in _baseOctree.GetEntitiesInSameArea(entity))
             {
                 if (entity == other) continue;
-                if (entity.AABB.Collides(other.AABB))
+                if (entity.IsInRadiusOfOther(other))
                 {
-                    entity.isColliding = true;
-                    other.isColliding = true;
+                    entity.isCollidingRadius = true;
+                    other.isCollidingRadius = true;
+
+                    if (entity.AABB.Collides(other.AABB))
+                    {
+                        entity.isCollidingAABB = true;
+                        other.isCollidingAABB = true;
+                    }
                 }
             }
         }
@@ -128,4 +136,6 @@ public class CollisionsManager : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(localBounds.Center, localBounds.Size);
     }
+
+
 }

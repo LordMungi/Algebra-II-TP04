@@ -4,7 +4,9 @@ public class Entity : MonoBehaviour
 {
     public Vector3 velocity;
     public Bounds AABB;
-    public bool isColliding = false;
+    public float radius;
+    public bool isCollidingAABB = false;
+    public bool isCollidingRadius = false;
     private bool _isFast = false;
     private bool _isPaused = false;
     private bool _isReversed = false;
@@ -16,6 +18,7 @@ public class Entity : MonoBehaviour
         MeshFilter mesh = GetComponent<MeshFilter>();
         AABB = new Bounds(mesh.mesh.bounds);
         AABB.Move(transform.position);
+        radius = Mathf.Abs((transform.position - AABB.max).magnitude) * 2;
     }
 
     public void Move()
@@ -45,14 +48,23 @@ public class Entity : MonoBehaviour
     {
         _isPaused = value;
     }
+    public bool IsInRadiusOfOther(Entity other)
+    {
+        return Mathf.Abs((transform.position - other.transform.position).magnitude) <= radius + other.radius;
+    }
 
     private void OnDrawGizmos()
     {
-        if (isColliding)
+        if (isCollidingAABB)
             Gizmos.color = Color.red;
         else
             Gizmos.color = Color.blue;
-
         Gizmos.DrawWireCube(transform.position, AABB.Size);
+
+        if (isCollidingRadius)
+            Gizmos.color = Color.red;
+        else
+            Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }
