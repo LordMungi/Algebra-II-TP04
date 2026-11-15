@@ -18,8 +18,18 @@ public struct Bounds
 
     public Bounds(Bounds other)
     {
-        this.min = other.min;
-        this.max = other.max;
+        min = other.min;
+        max = other.max;
+
+        InvertIfImpossible(ref min.x, ref max.x);
+        InvertIfImpossible(ref min.y, ref max.y);
+        InvertIfImpossible(ref min.z, ref max.z);
+    }
+
+    public Bounds(UnityEngine.Bounds other)
+    {
+        min = other.min;
+        max = other.max;
 
         InvertIfImpossible(ref min.x, ref max.x);
         InvertIfImpossible(ref min.y, ref max.y);

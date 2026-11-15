@@ -103,3 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 682b58c8bd25550489be640792a836f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Entity
+  velocity: {x: 0, y: 0, z: 0}
+  AABB:
+    min: {x: 0, y: 0, z: 0}
+    max: {x: 0, y: 0, z: 0}
