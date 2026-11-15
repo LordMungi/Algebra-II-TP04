@@ -7,6 +7,7 @@ public class Entity : MonoBehaviour
     public bool isColliding = false;
     private bool _isFast = false;
     private bool _isPaused = false;
+    private bool _isReversed = false;
 
     public void Initialize(Vector3 position, Vector3 velocity)
     {
@@ -22,33 +23,27 @@ public class Entity : MonoBehaviour
         if (!_isPaused)
         {
             Vector3 delta = velocity * Time.deltaTime;
+            if (_isFast) delta *= 2;
+            if (_isReversed) delta *= -1;
+
             transform.position += delta;
             AABB.Move(delta);
         }
     }
 
-    public void Reverse()
+    public void SetReverse(bool value)
     {
-        velocity *= -1;
+        _isReversed = value;
     }
 
-    public void ToggleFast()
+    public void SetFast(bool value)
     {
-        if (_isFast)
-        {
-            velocity *= 0.5f;
-            _isFast = false;
-        }
-        else
-        {
-            velocity *= 2;
-            _isFast = true;
-        }
+        _isFast = value;
     }
 
-    public void TogglePause()
+    public void SetPause(bool value)
     {
-        _isPaused = !_isPaused;
+        _isPaused = value;
     }
 
     private void OnDrawGizmos()

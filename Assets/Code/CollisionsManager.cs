@@ -13,6 +13,10 @@ public class CollisionsManager : MonoBehaviour
 
     private bool _debugView = true;
 
+    private bool _isPaused = false;
+    private bool _isFast = false;
+    private bool _isReversed = false;
+
     void Start()
     {
         _entities = new List<Entity>(); 
@@ -41,50 +45,54 @@ public class CollisionsManager : MonoBehaviour
             _baseOctree.Insert(e);
         }
 
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+            _isReversed = !_isReversed;
+
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+            _isFast = !_isFast;
+
+        if (Keyboard.current.wKey.wasPressedThisFrame)
+            _isPaused = !_isPaused;
+
         // Move
         foreach (Entity entity in _entities)
         {
-            if (Keyboard.current.rKey.wasPressedThisFrame)
-                entity.Reverse();
-
-            if (Keyboard.current.qKey.wasPressedThisFrame)
-                entity.ToggleFast();
-
-            if (Keyboard.current.wKey.wasPressedThisFrame)
-                entity.TogglePause();
+            entity.SetReverse(_isReversed);
+            entity.SetFast(_isFast);
+            entity.SetPause(_isPaused);
 
                 entity.Move();
             if (entity.transform.position.x <= worldBounds.min.x)
             {
                 entity.transform.position = new Vector3(worldBounds.min.x, entity.transform.position.y, entity.transform.position.z);
-                entity.velocity.x = Mathf.Abs(entity.velocity.x);
+                entity.velocity.x = entity.velocity.x * -1;
             }
             if (entity.transform.position.x >= worldBounds.max.x)
             {
                 entity.transform.position = new Vector3(worldBounds.max.x, entity.transform.position.y, entity.transform.position.z);
-                entity.velocity.x = Mathf.Abs(entity.velocity.x) * -1;
+                entity.velocity.x = entity.velocity.x * -1;
             }
 
             if (entity.transform.position.y <= worldBounds.min.y)
             {
                 entity.transform.position = new Vector3(entity.transform.position.x, worldBounds.min.y, entity.transform.position.z);
-                entity.velocity.y = Mathf.Abs(entity.velocity.y);
+                entity.velocity.y = entity.velocity.y * -1;
             }
             if (entity.transform.position.y >= worldBounds.max.y)
             {
                 entity.transform.position = new Vector3(entity.transform.position.x, worldBounds.max.y, entity.transform.position.z);
-                entity.velocity.y = Mathf.Abs(entity.velocity.y) * -1;
+                entity.velocity.y = entity.velocity.y * -1;
             }
 
             if (entity.transform.position.z <= worldBounds.min.z)
             {
                 entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y,worldBounds.min.z);
-                entity.velocity.z = Mathf.Abs(entity.velocity.z);
+                entity.velocity.z = entity.velocity.z * -1;
             }
             if (entity.transform.position.z >= worldBounds.max.z)
             {
                 entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y, worldBounds.max.z);
-                entity.velocity.z = Mathf.Abs(entity.velocity.z) * -1;
+                entity.velocity.z = entity.velocity.z * -1;
             }
 
             if (_baseOctree.TryRemove(entity))
