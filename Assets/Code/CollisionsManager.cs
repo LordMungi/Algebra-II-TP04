@@ -44,7 +44,16 @@ public class CollisionsManager : MonoBehaviour
         // Move
         foreach (Entity entity in _entities)
         {
-            entity.Move();
+            if (Keyboard.current.rKey.wasPressedThisFrame)
+                entity.Reverse();
+
+            if (Keyboard.current.qKey.wasPressedThisFrame)
+                entity.ToggleFast();
+
+            if (Keyboard.current.wKey.wasPressedThisFrame)
+                entity.TogglePause();
+
+                entity.Move();
             if (entity.transform.position.x <= worldBounds.min.x)
             {
                 entity.transform.position = new Vector3(worldBounds.min.x, entity.transform.position.y, entity.transform.position.z);
@@ -91,7 +100,6 @@ public class CollisionsManager : MonoBehaviour
                 if (entity == other) continue;
                 if (entity.AABB.Collides(other.AABB))
                 {
-                    Debug.Log("Collision!");
                     entity.isColliding = true;
                     other.isColliding = true;
                 }
