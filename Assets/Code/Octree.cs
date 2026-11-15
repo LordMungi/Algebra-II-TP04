@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class Octree <T> where T : IPoint
 {
@@ -112,6 +113,46 @@ public class Octree <T> where T : IPoint
             return _entities;
 
         return null;
+    }
+
+
+    public void GetEntitiesInCollidingTree(T entity, Octree<T> tree, List<T> total)
+    {
+        if (!_bounds.Contains(entity.GetPosition()))
+            return;
+
+        if (_isDivided)
+        {
+            foreach (Octree<T> branch in _branches)
+            {
+                branch.GetEntitiesInCollidingTree(entity, tree, total);
+            }
+        }
+        else
+        {
+            tree.GetEntitiesInCollidingArea(_bounds, total);
+        }
+    }
+
+    public void GetEntitiesInCollidingArea(Bounds bounds, List<T> total)
+    {
+        if (!_bounds.Collides(bounds))
+            return;
+
+        if (_isDivided)
+        {
+            foreach (Octree<T> branch in _branches)
+            {
+                branch.GetEntitiesInCollidingArea(bounds, total);
+            }
+        }
+        else
+        {
+            foreach (T e in _entities)
+            {
+                total.Add(e);
+            }
+        }
     }
 
     public void Relocate(Vector3 position)

@@ -13,9 +13,9 @@ public class Entity : MonoBehaviour, IPoint
     private bool _isPaused = false;
     private bool _isReversed = false;
 
-    private List<Triangle> _triangles = new List<Triangle>();
+    public List<Triangle> triangles = new List<Triangle>();
 
-    private Octree<Triangle> _meshTree;
+    public Octree<Triangle> meshTree;
 
     public void Initialize(Vector3 position, Vector3 velocity)
     {
@@ -24,24 +24,24 @@ public class Entity : MonoBehaviour, IPoint
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         AABB = new Bounds(mesh.bounds);
         AABB.Scale(transform.lossyScale);
-        _meshTree = new Octree<Triangle>(AABB, 10);
+        meshTree = new Octree<Triangle>(AABB, 10);
         AABB.Move(transform.position);
 
         radius = Mathf.Abs((transform.position - AABB.max).magnitude) * 2;
         for (int i = 0; i < mesh.triangles.Length / 3; i++)
         {
             int index = i * 3;
-            _triangles.Add(new Triangle(Vector3.Scale(mesh.vertices[mesh.triangles[index]], transform.lossyScale), 
+            triangles.Add(new Triangle(Vector3.Scale(mesh.vertices[mesh.triangles[index]], transform.lossyScale), 
                                         Vector3.Scale(mesh.vertices[mesh.triangles[index + 1]], transform.lossyScale), 
                                         Vector3.Scale(mesh.vertices[mesh.triangles[index + 2]], transform.lossyScale)));
         }
 
-        foreach (Triangle triangle in _triangles)
+        foreach (Triangle triangle in triangles)
         {
-            _meshTree.Insert(triangle);
+            meshTree.Insert(triangle);
             triangle.SetOffset(transform.position);
         }
-        _meshTree.Relocate(transform.position);
+        meshTree.Relocate(transform.position);
     }
 
     public void Update()
@@ -54,17 +54,17 @@ public class Entity : MonoBehaviour, IPoint
 
             transform.position += delta;
             AABB.Move(delta);
-            foreach (Triangle triangle in _triangles)
+            foreach (Triangle triangle in triangles)
             {
             }
         }
-        foreach (Triangle triangle in _triangles)
+        foreach (Triangle triangle in triangles)
         {
             triangle.SetOffset(transform.position);
             triangle.Draw();
         }
-        _meshTree.Relocate(transform.position);
-        _meshTree.Draw();
+        meshTree.Relocate(transform.position);
+        meshTree.Draw();
     }
 
     public void SetReverse(bool value)

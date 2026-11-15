@@ -120,6 +120,20 @@ public class CollisionsManager : MonoBehaviour
                     {
                         entity.isCollidingAABB = true;
                         other.isCollidingAABB = true;
+
+                        foreach (Triangle triangle in entity.triangles)
+                        {
+                            List<Triangle> possibleCollisions = new List<Triangle>();
+                            entity.meshTree.GetEntitiesInCollidingTree(triangle, other.meshTree, possibleCollisions);
+                            foreach (Triangle othertriangle in possibleCollisions)
+                            {
+                                if (triangle.IsColliding(othertriangle))
+                                {
+                                    triangle.isColliding = true;
+                                    othertriangle.isColliding = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
