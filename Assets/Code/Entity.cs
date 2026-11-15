@@ -42,7 +42,6 @@ public class Entity : MonoBehaviour, IPoint
             triangle.SetOffset(transform.position);
         }
         _meshTree.Relocate(transform.position);
-        Debug.Log("Tree created. Points: "+ _meshTree.TotalCount);
     }
 
     public void Update()
